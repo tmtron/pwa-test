@@ -1,5 +1,7 @@
 # PwaUpdateTest
 
+see related [SO question: How to update an old PWA that is constantly polling?](https://stackoverflow.com/questions/65340710/how-to-update-an-old-pwa-that-is-constantly-polling)
+
 ## Init
 * npm install
 * npm run build:prod
