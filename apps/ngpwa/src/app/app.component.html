@@ -1,6 +1,7 @@
 <header class="flex">
-  <h1>Angular PWA update test</h1>
+  <h1>Angular PWA update test V={{ version }}</h1>
 </header>
 <main>
   <div>status: {{ status }}</div>
+  <button (click)='stopTimer()' [disabled]='!timerActive' >stop timer</button>
 </main>

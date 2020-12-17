@@ -16,8 +16,14 @@
             "polyfills": "apps/ngpwa/src/polyfills.ts",
             "tsConfig": "apps/ngpwa/tsconfig.app.json",
             "aot": true,
-            "assets": ["apps/ngpwa/src/favicon.ico", "apps/ngpwa/src/assets"],
-            "styles": ["apps/ngpwa/src/styles.scss"],
+            "assets": [
+              "apps/ngpwa/src/favicon.ico",
+              "apps/ngpwa/src/assets",
+              "apps/ngpwa/src/manifest.webmanifest"
+            ],
+            "styles": [
+              "apps/ngpwa/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -46,7 +52,9 @@
                   "maximumWarning": "6kb",
                   "maximumError": "10kb"
                 }
-              ]
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "apps/ngpwa/ngsw-config.json"
             }
           }
         },
@@ -75,12 +83,17 @@
               "apps/ngpwa/tsconfig.spec.json",
               "apps/ngpwa/tsconfig.editor.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/ngpwa/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/ngpwa/**/*"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/ngpwa"],
+          "outputs": [
+            "coverage/apps/ngpwa"
+          ],
           "options": {
             "jestConfig": "apps/ngpwa/jest.config.js",
             "passWithNoTests": true
@@ -109,15 +122,21 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/ngpwa-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/ngpwa-e2e/**/*"]
+            "tsConfig": [
+              "apps/ngpwa-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/ngpwa-e2e/**/*"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "defaultCollection": "@nrwl/angular"
+    "defaultCollection": "@nrwl/angular",
+    "analytics": false
   },
   "schematics": {
     "@nrwl/angular": {

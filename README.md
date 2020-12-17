@@ -1,98 +1,104 @@
 # PwaUpdateTest
 
-This project was generated using [Nx](https://nx.dev).
+## Init
+* npm install
+* npm run build:prod
+* npm run serve
+* Open the app: http://127.0.0.1:8080/
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+Notes:
+* we use: `registrationStrategy: 'registerImmediately'`
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+## Update App (no timer) - works
+This works as expected.
 
-## Quick Start & Documentation
+Initial state:
+* We have already started the app once and the browser has version 1 of the PWA.
+* Close the browser tabs (that show our app)
 
-[Nx Documentation](https://nx.dev/angular)
+Now we build and serve a new app version:
+* Change the application: in AppComponent, update the version property to `2`.
+* Build: `npm run build:prod`
+* Restart the http server (to make sure that it does not serve
+  old cached content): `npm run serve`
 
-[10-minute video showing all Nx features](https://nx.dev/angular/getting-started/what-is-nx)
+Open the app: http://127.0.0.1:8080/
+* the browser will sever the previous app-version `1`
+* since this is a navigation request the browser will check for updates
+* now watch the terminal of the http-server - after some seconds it will show 
+  that the browser requests the new application version 
+  ```
+  [2020-12-17T10:58:37.316Z]  "GET /ngsw.json?ngsw-cache-bust=0.33340559290865834" ...
+  [2020-12-17T10:58:37.380Z]  "GET /index.html" ...
+  [2020-12-17T10:58:37.390Z]  "GET /main.4272f7787741a944a504.js" ...
+  [2020-12-17T10:58:37.531Z]  "GET /ngsw.json?ngsw-cache-bust=0.45014398825618906" ...
+  ```
+* when we now refresh the tab (press F5), the new app version `2` will be activated
 
-[Interactive Tutorial](https://nx.dev/angular/tutorial/01-create-application)
+## Update App (timer) - FAILS
+Now we build a new version of the app, but activate the timer.
 
-## Adding capabilities to your workspace
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+Initial state:
+* We have started the app before and the browser has version 2 of the PWA.
+* Close the browser tabs (that show our app)
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+Now we build and serve a new app version:
+* Change the application: in AppComponent, update the version property to `3`.
+* Build: `npm run build:prod`
+* Restart the http server (to make sure that it does not serve
+  old cached content): `npm run serve`
 
-Below are our core plugins:
+Open the app: http://127.0.0.1:8080?timer
+* Note: the `timer` parameter!
+* the browser will sever the previous app-version `2` (as expected)
+* since this is a navigation request the browser will check for updates
+* now watch the terminal of the http-server - after some seconds it will show
+  that the browser requests a new version of the `ngsw-worker.js`
+  ```
+  [2020-12-17T11:03:23.948Z]  "GET /ngsw-worker.js" ...
+  ```
+* but it does not get the new application version 
+* when we now refresh the tab (press F5), the OLD app version `2` will still be activated!
+* closing the browser window and opening again (with the timer enabled) will not help
+  * **we still see the OLD version `2` - refresh won't work**
+* workaround to update the local version is to press CTRL+F5: now we are on version 3
+  * but this is of course not a solution, because ordinary users don't know this 
 
-- [Angular](https://angular.io)
-  - `ng add @nrwl/angular`
-- [React](https://reactjs.org)
-  - `ng add @nrwl/react`
-- Web (no framework frontends)
-  - `ng add @nrwl/web`
-- [Nest](https://nestjs.com)
-  - `ng add @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `ng add @nrwl/express`
-- [Node](https://nodejs.org)
-  - `ng add @nrwl/node`
+### NGSW state
+http://127.0.0.1:8080/ngsw/state 
 
-There are also many [community plugins](https://nx.dev/nx-community) you could add.
+```
+NGSW Debug Info:
 
-## Generate an application
+Driver state: NORMAL ((nominal))
+Latest manifest hash: b5a9f50d4efae604dbc6706040c71ecb2029c1cf
+Last update check: never
 
-Run `ng g @nrwl/angular:app my-app` to generate an application.
+=== Version b5a9f50d4efae604dbc6706040c71ecb2029c1cf ===
 
-> You can use any of the plugins above to generate applications as well.
+Clients: 4cad0ef1-179e-4629-b20f-602c4a4be1f9, 4d82d618-8fac-4e79-938c-605266702fa1, e0813c6a-3b76-4aeb-a14a-9043f0417b24, 9bf1be36-e911-4612-8158-21819eb222dc, 09337bd0-d060-46a1-b9e9-56257b879bdd, 0ce1327b-05bb-44e1-bba7-f3769cbad9b2, c9b796dd-b20c-417b-a504-7f065fd841db
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+=== Idle Task Queue ===
+Last update tick: 1s996u
+Last update run: never
+Task queue:
+ * init post-load (update, cleanup)
+ * initialization(b5a9f50d4efae604dbc6706040c71ecb2029c1cf)
+ * check-updates-on-navigation
 
-## Generate a library
+Debug log:
+```
 
-Run `ng g @nrwl/angular:lib my-lib` to generate a library.
+* I am not sure why there are so many `Clients` - the app is only opened in one tab and the
+`ngsw/state` tab is open
+  * whenever you press refresh on the http://127.0.0.1:8080/ngsw/state URL a new client will show up and not go away
+* It seems tha the task queue never changes
 
-> You can also use any of the plugins above to generate libraries as well.
+Test URLs:
+* http://127.0.0.1:8080/
+* http://127.0.0.1:8080/ngsw/state
+* http://127.0.0.1:8080/?no-timer
 
-Libraries are sharable across libraries and applications. They can be imported from `@pwa-update-test/mylib`.
 
-## Development server
 
-Run `ng serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng g component my-component --project=my-app` to generate a new component.
-
-## Build
-
-Run `ng build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
-
-## ☁ Nx Cloud
-
-### Computation Memoization in the Cloud
-
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
-
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
-
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
