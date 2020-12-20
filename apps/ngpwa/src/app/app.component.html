@@ -4,4 +4,8 @@
 <main>
   <div>status: {{ status }}</div>
   <button (click)='stopTimer()' [disabled]='!timerActive' >stop timer</button>
+  <button (click)='checkForUpdate()' >Check for update</button>
+  <button (click)='activateUpdate()' >Activate update</button>
+  <button (click)='autoActivate()' [disabled]='!!autoActivateSubscription' >Auto-activate</button>
+
 </main>

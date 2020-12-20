@@ -1,6 +1,8 @@
 # PwaUpdateTest
 
-see related [SO question: How to update an old PWA that is constantly polling?](https://stackoverflow.com/questions/65340710/how-to-update-an-old-pwa-that-is-constantly-polling)
+see related:
+* [SO question: How to update an old PWA that is constantly polling?](https://stackoverflow.com/questions/65340710/how-to-update-an-old-pwa-that-is-constantly-polling)
+* [Angular ServiceWorker #40207](https://github.com/angular/angular/issues/40207)
 
 ## Init
 * npm install
@@ -100,7 +102,7 @@ Debug log:
 Test URLs:
 * http://127.0.0.1:8080/
 * http://127.0.0.1:8080/ngsw/state
-* http://127.0.0.1:8080/?no-timer
+* http://127.0.0.1:8080/?timer
 
 
 
